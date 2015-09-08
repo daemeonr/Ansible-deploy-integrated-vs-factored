@@ -56,8 +56,7 @@ HowTo:
 
   - Add desired packages to files/TOMCAT6PKGS, then add related rpm's (if
     not using the default distro) to files/RPMS (these will be copied over
-    to the target system's local repo). Note that we do not delete this 
-    repo (if I recall) after a successful install at client's request.
+    to the target system's local repo). 
   - put the RPM's in ./files/RPMS/
   - update the various component versions, add additional applications, etc.
     follow the same directory tree naming convention. For the modularized 
