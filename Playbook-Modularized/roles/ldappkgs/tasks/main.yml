@@ -1,0 +1,5 @@
+- name: install LDAP packages
+  yum: name={{ item }}
+     state=latest
+  with_lines: 
+     - cat files/LDAPPKGS

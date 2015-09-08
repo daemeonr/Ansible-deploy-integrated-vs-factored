@@ -1,0 +1,131 @@
+- name: install web relevant components
+  hosts: [web|app]
+  roles:
+    - httpdpkgs
+    - javarpms
+    - tomcatpkgs
+    - ntppkgs
+
+  vars:
+    - httpdpkgs
+    - javarpms
+    - tomcatpkgs
+    - ntppkgs
+
+- name: install app relevant components
+  hosts: [app]
+  roles:
+    - ldappkgs
+    - redisrpms
+    - tomcat7rpms
+    - ntppkgs
+
+  vars:
+    - ldappkgs
+    - redisrpms
+    - tomcat7rpms
+
+
+  sudo: yes
+  gather_facts: no
+  roles:
+  handlers:
+    - name: httpd_service_startedAndBoots
+      service: name=httpd state=running enabled=yes
+
+    - name: tomcat6_service_startedAndBoots
+      service: name=tomcat6 state=running enabled=yes
+
+  tasks:
+    # - name: gather installed components via module
+      # action: gather_installed
+
+    - name: install JAVARPMS rpm
+      # need to configure still
+      shell: /bin/rpm -Ui {{ item }}
+      with_lines: 
+         - cat files/JAVARPMS
+      ignore_errors: yes
+
+    - name: check_tomcat6 package
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/TOMCATPKGS
+      notify: tomcat6_service_startedAndBoots
+
+    - name: install Apache httpd related packages
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/HTTPDPKGS
+      notify: httpd_service_startedAndBoots
+
+    - name: install MISC YUM packages
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/MISCPKGS
+
+    - name: install REDISRPMS rpms
+      shell:  /bin/rpm -Ui {{ item }}
+      with_lines: 
+         - cat files/REDISRPMS
+      ignore_errors: yes
+
+
+- hosts: [app]
+  sudo: yes
+  
+  gather_facts: no
+  roles:
+
+  handlers:
+    - name: httpd_service_startedAndBoots
+      service: name=httpd state=running
+
+    - name: tomcat6_service_startedAndBoots
+      service: name=tomcat6 state=running
+
+    - name: tomcat7_service_startedAndBoots
+      service: name=tomcat7 state=running
+
+  tasks:
+    - name: http_check
+      # yum: also takes enablerepo=<dest> does not persist!
+      yum: name="httpd-2.2.15*" state=latest
+      notify: httpd_service_startedAndBoots
+
+    - name: check_tomcat6
+      yum: name="tomcat6-el-2.1*"
+         state=latest
+      yum: name="tomcat6-servlet-2.5*"
+         state=latest
+      yum: name="tomcat6-lib-6.0*"
+         state=latest
+      yum: name="tomcat6-6.0.*"
+         state=latest
+      notify: tomcat6_service_startedAndBoots
+
+    - name: check_tomcat7
+      yum: name="tomcat7.*"
+         state=latest
+      notify: tomcat7_service_startedAndBoots
+
+    - name: check_libaio
+      yum: name="libaio"
+         state=latest
+
+    - name: check_openldap
+      yum: name="openldap-2.4.*"
+         state=latest
+      yum: name="openldap-server-2.4.*"
+         state=latest
+      yum: name="openldap-clients-2.4.*"
+         state=latest
+      yum: name="openldap-2.4.*"
+         state=latest
+
+    - name: check_modssl
+      yum: name="mod_ssl"
+

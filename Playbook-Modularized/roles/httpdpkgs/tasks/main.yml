@@ -1,0 +1,11 @@
+- handler:
+  - name: httpd_service_startedAndBoots
+    service: name=httpd state=running enabled=yes
+
+- name: install Apache httpd related packages
+  yum: name={{ item }}
+     state=latest
+  with_lines: 
+     - cat files/HTTPDPKGS
+  notify: httpd_service_startedAndBoots
+

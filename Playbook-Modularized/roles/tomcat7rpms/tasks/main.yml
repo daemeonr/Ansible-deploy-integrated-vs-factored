@@ -1,0 +1,11 @@
+- handlers:
+    - name: tomcat7_service_startedAndBoots
+      service: name=tomcat7 state=running enabled=yes
+
+- name: install tomcat7 rpms
+  # no yum repo for tc7 in RHEL/COS 6.6
+  shell:  /bin/rpm -Ui {{ item }}
+  with_lines: 
+     - cat files/TOMCAT7RPMS
+  ignore_errors: yes
+

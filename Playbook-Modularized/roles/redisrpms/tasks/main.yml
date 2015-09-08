@@ -1,0 +1,6 @@
+- name: install REDISRPMS rpms
+  shell:  /bin/rpm -Ui {{ item }}
+  with_lines: 
+     - cat files/REDISRPMS
+  ignore_errors: yes
+

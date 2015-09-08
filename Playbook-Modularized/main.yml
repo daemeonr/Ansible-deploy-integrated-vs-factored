@@ -1,0 +1,30 @@
+
+- name: install web relevant components
+  sudo: yes
+  gather_facts: no
+  hosts: [web|app]
+  roles:
+    - httpdpkgs
+    - javarpms
+    - tomcatpkgs
+    - ntppkgs
+
+  vars:
+    - httpdpkgs
+    - javarpms
+    - tomcatpkgs
+    - ntppkgs
+
+- name: install app relevant components
+  hosts: [app]
+  roles:
+    - ldappkgs
+    - tomcat7rpms
+    - ntppkgs
+
+  vars:
+    - ldappkgs
+    - redisrpms
+    - tomcat7rpms
+
+

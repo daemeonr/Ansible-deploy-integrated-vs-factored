@@ -1,0 +1,6 @@
+- name: install JAVARPMS rpm
+  # need to configure still
+  shell: /bin/rpm -Ui {{ item }}
+  with_lines: 
+     - cat files/JAVARPMS
+  ignore_errors: yes

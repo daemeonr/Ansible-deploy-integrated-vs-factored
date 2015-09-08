@@ -1,0 +1,129 @@
+# =============================================================
+# all packages: use web:app instead of all for no great reason
+# =============================================================
+- hosts: web:app
+  sudo: yes
+  gather_facts: no
+
+  vars:
+    NTP_ConfigFile: "files/ntp.conf"
+
+  handlers:
+    - name: ntp_service_startedAndBoots
+      service: name=ntpd state=running enabled=yes
+
+    - name: httpd_service_startedAndBoots
+      service: name=httpd state=running enabled=yes
+
+    - name: tomcat6_service_startedAndBoots
+      service: name=tomcat6 state=running enabled=yes
+
+    - name: Rebuild_yum_cache
+      shell: "yum clean all ; yum makecache"
+
+  tasks:
+   #-name: update_ntpd_config_file
+     #copy the file
+     #notify: ntp_service_startedAndBoots
+
+    - name: create_RPMDestDir
+      shell: "mkdir -p {{ RPMDestDir }}"
+
+    - name: create_RepoDataDestDir
+      shell: "mkdir -p {{ RepoDataDestDir }}"
+
+    - name: setup_RepoDefFile
+      # set up the repo config file
+      copy: src="{{ RepoDefFile }}" dest={{ RepoDefDestDir }}
+      notify: Rebuild_yum_cache
+
+    - name: setup_Local_Yum_Repo
+      # copy over the repo
+      copy: src="{{ RepoDataSrct }}" dest={{ RepoDataDestDir }}
+      notify: Rebuild_yum_cache
+
+    - name: copy_the_rpm_files_to_target
+      copy: src="{{ item }}" dest={{ RPMDestDir }}
+      with_fileglob:
+        - "{{ RPMSourceDir }}/*.rpm"
+
+    - name: install_JAVARPMS_rpm
+      # need to configure still
+      yum: name={{ item }}
+         state=present
+      #shell: /bin/rpm -Ui "{{ RPMDestDir }}/{{ item }}"
+      with_lines: 
+         - cat files/JAVARPMS
+      ignore_errors: yes
+
+    - name: update_alternatives_java
+      shell: update-alternatives --auto java
+      #ignore_errors: yes
+
+    - name: install_tomcat6 package
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/TOMCAT6PKGS
+      notify: tomcat6_service_startedAndBoots
+
+    - name: install_Apache_httpd
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/HTTPDPKGS
+      notify: httpd_service_startedAndBoots
+
+# =============================================================
+# web only packages
+# =============================================================
+
+- hosts: web
+  sudo: yes
+  gather_facts: no
+  # configure java, configure ntp (?)
+  roles:
+  vars:
+    NTP_ConfigFile: "files/ntp.conf"
+
+  sudo: yes
+  gather_facts: no
+  roles:
+  handlers:
+  tasks:
+    - name: gather_installed_components 
+      action: gather_installed
+
+# =============================================================
+# app only packages
+# =============================================================
+- hosts: app
+  sudo: yes
+  gather_facts: no
+  roles:
+
+  handlers:
+    - name: tomcat7_service_startedAndBoots
+      service: name=tomcat7 enabled=yes
+      ignore_errors: yes
+      service: name=tomcat7 state=running 
+      ignore_errors: yes
+
+  tasks:
+    - name: gather_installed_components
+      action: gather_installed
+
+    - name: install_tomcat7
+      yum: name={{ item }}
+         state=present
+      with_lines: 
+         - cat files/TOMCAT7RPMS
+      ignore_errors: yes
+      notify: tomcat7_service_startedAndBoots
+
+    - name: install_openldap
+      yum: name={{ item }}
+         state=latest
+      with_lines: 
+         - cat files/OPENLDAPPKGS
+

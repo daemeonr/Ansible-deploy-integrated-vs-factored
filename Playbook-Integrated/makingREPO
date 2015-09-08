@@ -1,0 +1,22 @@
+- how to create an on disk repo
+- install package createrepo and dependencies (yum)
+- createrepo <options> /opt/MVP/RPMS/
+
+- in /etc/yum.repo.d copy e.g. the cdrom repo and change to the following
+  (file is called MVP.repo in ansible playbook)
+
+# Monitise VP local repo        
+#
+#  yum --enablerepo=mvp [command]
+#  
+
+[mvp]
+name=MVP
+baseurl=file:///opt/MVP/files/RPMS
+gpgcheck=0
+enabled=1
+# .. gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+Execute the following:
+yum clean all
+yum makecache

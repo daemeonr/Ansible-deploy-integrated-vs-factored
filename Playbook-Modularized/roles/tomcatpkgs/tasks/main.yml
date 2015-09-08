@@ -1,0 +1,11 @@
+- handlers:
+    - name: tomcat6_service_startedAndBoots
+      service: name=tomcat6 state=running enabled=yes
+
+- name: check_tomcat6 package
+  yum: name={{ item }}
+     state=latest
+  with_lines: 
+     - cat files/TOMCATPKGS
+  notify: tomcat6_service_startedAndBoots
+

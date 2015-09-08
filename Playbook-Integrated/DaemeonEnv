@@ -1,0 +1,21 @@
+[all:vars]
+  install_user=cmroot
+  app_user=POOLUSER
+  instance=dev
+  server_domain=mydoman.com
+  app_host="vmapp1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.51"
+  web_host="vmweb1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.52"
+  RPMSourceDir="files/RPMS"
+  RPMDestDir="/opt/MVP/files/RPMS"
+  RepoDataSrct="files/RepoData/repodata"
+  RepoDataDestDir={{ RPMDestDir }}
+  RepoDefFile="files/RepoData/MVP.repo"
+  RepoDefDestDir="/etc/yum.repos.d/"
+
+[app]
+  vmapp1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.51
+
+[web]
+  vmweb1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.52
+
+

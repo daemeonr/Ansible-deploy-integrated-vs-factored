@@ -1,0 +1,37 @@
+[all:vars]
+  install_user=passuser
+  app_user=passuser
+  instance=dev
+  server_domain=mydomain.com
+  app_host="vmapp1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.51"
+  web_host="vmweb1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.52"
+
+[app]
+  vmapp1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.51
+
+[web]
+  vmweb1 ansible_ssh_port=22 ansible_ssh_host=192.168.56.52
+
+[TOMCATRPMS]
+tomcat6-6.0.*
+tomcat6-el-2.1*
+tomcat6-servlet-2.5*
+tomcat6-lib-6.0*
+tomcat6-jsp-2.1*
+
+[HTTPDRPMS]
+httpd-2.2.*
+mod_ssl-2.2*
+
+[MISC]
+libaio-0.3.*
+openldap-2.4.*
+openldap-servers-2.4.*
+openldap-clients-2.4.*
+
+[JAVA]
+jdk-8u*
+
+[REDIS]
+redis-2.8*
+
