@@ -24,7 +24,6 @@
 
   vars:
     - ldappkgs
-    - redisrpms
     - tomcat7rpms
 
 

@@ -16,13 +16,11 @@
   hosts: [app]
   roles:
     - ldappkgs
-    - redisrpms
     - tomcat7rpms
     - ntppkgs
 
   vars:
     - ldappkgs
-    - redisrpms
     - tomcat7rpms
 
 

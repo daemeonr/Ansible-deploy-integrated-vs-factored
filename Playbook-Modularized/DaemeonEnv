@@ -32,6 +32,3 @@ openldap-clients-2.4.*
 [JAVA]
 jdk-8u*
 
-[REDIS]
-redis-2.8*
-
